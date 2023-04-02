@@ -4,7 +4,7 @@ from turtle import color
 import cv2
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import QImage, QPixmap, QFont
-from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QFrame, QLineEdit
+from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QFrame, QLineEdit, QSpacerItem
 from PyQt5.QtWidgets import QSizePolicy
 import threading
 
@@ -20,8 +20,9 @@ class CameraDialog(QDialog):
 
         # Create a label to display the camera input
         self.image_label = QLabel(self)
+        self.image_label.setContentsMargins(5, 5, 5, 5)
         self.image_label.resize(800, 800)
-
+        self.image_label.setStyleSheet('background-color: #000000; border: 1px solid black ; border-radius: 10px')
         self.image_label.setAlignment(Qt.AlignCenter)
 
         layout = QVBoxLayout()
@@ -68,6 +69,9 @@ class CameraDialog(QDialog):
 class MyWidget(QWidget):
     def __init__(self):
         super().__init__()
+        
+        self.number=0
+        self.data=["hi","I","am","not","Aviral","I","am","Ghechu"]
 
         self.switch=True
         self.dialog_frame = CameraDialog()
@@ -76,20 +80,22 @@ class MyWidget(QWidget):
         font = QFont('Arial', 12)
 
         self.text_label.setFont(font)
-        self.text_label.setStyleSheet('background-color: #ffffff ; border: 2px solid black ; border-radius: 10px; color: #D22E1E')
+        self.text_label.setStyleSheet('background-color: #ffffff ; border: 2px solid black ; border-radius: 10px; color: #000000; padding: 10px')
         self.text_label.setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
         button1 = QPushButton('On/Off', self)
 
-        button1.setMinimumHeight(50)
-        button1.setStyleSheet('background-color: #ffffff; border-radius: 10px')
+        button1.setMinimumHeight(60)
+        button1.setMaximumWidth(180)
+        button1.setStyleSheet('background-color: #ffffff ; border: 2px solid black ; border-radius: 10px; color: #6B170F; padding: 10px')
         button1.clicked.connect(self.on_click1)
         button1.setFont(font)
 
         button2 = QPushButton('Translate', self)
 
-        button2.setMinimumHeight(50)
-        button2.setStyleSheet('background-color: #ffffff; border-radius: 10px')
+        button2.setMinimumHeight(60)
+        button2.setMaximumWidth(180)
+        button2.setStyleSheet('background-color: #ffffff ; border: 2px solid black ; border-radius: 10px; color: #6B170F; padding: 10px')
         button2.clicked.connect(self.on_click2)
         button2.setFont(font)
 
@@ -97,6 +103,8 @@ class MyWidget(QWidget):
         layout_b = QHBoxLayout()
 
         layout_b.addWidget(button1)
+        spacer = QSpacerItem(40, 20)
+        layout_b.addItem(spacer)
         layout_b.addWidget(button2)
 
         layout1 = QVBoxLayout()
@@ -108,17 +116,23 @@ class MyWidget(QWidget):
 
         layout2.insertLayout(0, layout1)
 
+        self.timer2=QTimer(self)
+        self.timer2.timeout.connect(self.update_text)
+
         self.setLayout(layout2)
         self.resize(1280,540)
 
-    def update_text(self, text):
-        new_text=f"<h1>{text}</h1>"
-        font = QFont('Arial', 12)
-        self.text_label.setFont(font)
-        self.text_label.setStyleSheet('background-color: #ffffff ; border: 2px solid black ; border-radius: 10px; color: #D22E1E')
-        self.text_label.setText(new_text)
-
-    
+    def update_text(self):
+        if self.number<len(self.data):
+            text=self.data[self.number]
+            new_text=f"<h1>{text}</h1>"
+            font = QFont('Arial', 12)
+            self.text_label.setFont(font)
+            self.text_label.setStyleSheet('background-color: #ffffff ; border: 2px solid black ; border-radius: 10px; color: #D22E1E')
+            self.text_label.setText(new_text)
+            self.number+=1
+        else:
+            self.timer2.stop()
 
     @pyqtSlot()
     def on_click1(self):
@@ -131,12 +145,13 @@ class MyWidget(QWidget):
     
     @pyqtSlot()
     def on_click2(self):
-        self.update_text("Harsh")
-        self.update_text("Aviral")
+        self.number=0
+        self.timer2.start(750)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget = MyWidget()
-    widget.setStyleSheet('background-color: #004879')
+    widget.setStyleSheet('background-color: #003252')
     widget.show()
     sys.exit(app.exec_())
