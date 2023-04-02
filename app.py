@@ -77,8 +77,15 @@ class CameraDialog(QDialog):
     def update_frame(self):
         global labels_dict
         ret, frame = self.capture.read()
+        predicted_character = None
 
         if ret:
+
+            rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                
+            H, W, ch = rgb_image.shape
+            bytes_per_line = ch * W
+            
             while switch==True:
 
                 model_dict = pickle.load(open('ASL to English\Files and Models\model.p', 'rb'))
@@ -86,12 +93,7 @@ class CameraDialog(QDialog):
 
                 data_aux = []
                 x_ = []
-                y_ = []
-                
-                rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                
-                H, W, ch = rgb_image.shape
-                bytes_per_line = ch * W
+                y_ = []                
 
                 mp_hands = mp.solutions.hands
                 mp_drawing = mp.solutions.drawing_utils
@@ -137,12 +139,11 @@ class CameraDialog(QDialog):
                         print("too many hands")
 
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
-                    cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,
-                                cv2.LINE_AA)
-                    
-                    q_image = QImage(rgb_image.data, W, H, bytes_per_line, QImage.Format_RGB888)
-                    pixmap = QPixmap.fromImage(q_image)
-                    self.image_label.setPixmap(pixmap)
+                    cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,cv2.LINE_AA)
+            
+            #q_image = QImage(rgb_image.data, W, H, bytes_per_line, QImage.Format_RGB888)
+            #pixmap = QPixmap.fromImage(q_image)
+                    self.image_label.setPixmap(cv2)
                     
 
 

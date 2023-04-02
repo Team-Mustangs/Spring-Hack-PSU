@@ -19,11 +19,8 @@ class ks:
         time.sleep(1) # Pause for a second to avoid hitting the API too quickly
         return response.choices[0].text.strip()
 
-    def ask(self):
-        prompt = input("Enter keywords: ")
+    def ask(self,prompt):
         prompt = "Genearte simple but factually true sentence from the following keywords: " + prompt 
         answer = self.ask_question(prompt)
-        return answer
+        print(answer)
 
-g = ks() 
-print(g.ask())

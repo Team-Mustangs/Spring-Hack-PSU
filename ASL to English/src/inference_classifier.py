@@ -3,8 +3,16 @@ import pickle
 import cv2
 import mediapipe as mp
 import numpy as np
+import sys 
+sys.path.append("GUI and Frontend\src")
+import key_to_sentence as kts 
 
 def video_ASL2Txt():
+
+    c = kts.ks()
+
+
+    pred = ""
 
     model_dict = pickle.load(open('ASL to English\Files and Models\model.p', 'rb'))
     model = model_dict['model']
@@ -66,6 +74,7 @@ def video_ASL2Txt():
         H, W, _ = frame.shape
 
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        predicted_character = None
 
         results = hands.process(frame_rgb)
         if results.multi_hand_landmarks:
@@ -101,12 +110,20 @@ def video_ASL2Txt():
                 prediction = model.predict([np.asarray(data_aux)])
 
                 predicted_character = labels_dict[int(prediction[0])]
+
+                pred = pred + predicted_character + " "
+
             except:
                 print("too many hands")
 
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
             cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,
                         cv2.LINE_AA)
+            
+        if predicted_character == "OK": 
+            c.ask(pred)     
+        
+        
 
         cv2.imshow('frame', frame)
         cv2.waitKey(1)
