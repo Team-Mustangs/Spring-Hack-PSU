@@ -1,9 +1,10 @@
+from ctypes import alignment
 import sys
-from tkinter import Widget
+from tkinter import Widget, dialog
 import cv2
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QFrame
+from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QFrame, QLineEdit
 from PyQt5.QtWidgets import QSizePolicy
 
 
@@ -47,30 +48,63 @@ class MyWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        layout = QVBoxLayout()
-        layout.minimumSize()
+        #layout = QVBoxLayout()
+        #layout.minimumSize()
         dialog_frame = CameraDialog()
-
-        layout_h = QHBoxLayout()
-    
+#
+        #layout_h = QHBoxLayout()
+    #
         self.text_label = QLabel("Initial text", self) 
         self.text_label.setAlignment(Qt.AlignCenter)
         self.text_label.resize(100,100)
+#
+        #layout_h.addWidget(button)
+#
+        #layout.addWidget(dialog_frame)
+        #layout.addLayout(layout_h)
+        #layout.addWidget(self.text_label)
+#
+        #self.setLayout(layout)1
+        #self.resize(800,800)
 
-        button = QPushButton('Translate', self)
+        container_widget = QWidget(self)
+        container_widget.setStyleSheet('background-color: blue')
 
-        button.setMinimumHeight(50)
-        button.setStyleSheet('background-color: green')
-        button.clicked.connect(self.on_click)
+        button1 = QPushButton('Video on', self)
 
-        layout_h.addWidget(button)
+        button1.setMinimumHeight(50)
+        button1.setStyleSheet('background-color: green')
+        button1.clicked.connect(self.on_click)
 
-        layout.addWidget(dialog_frame)
-        layout.addLayout(layout_h)
-        layout.addWidget(self.text_label)
+        button2 = QPushButton('Video off', self)
 
-        self.setLayout(layout)
-        self.resize(800,800)
+        button2.setMinimumHeight(50)
+        button2.setStyleSheet('background-color: green')
+        button2.clicked.connect(self.on_click)
+
+        #button layout
+        layout_b = QHBoxLayout()
+
+        layout_b.addWidget(button1)
+        layout_b.addWidget(button2)
+
+        layout1 = QVBoxLayout()
+        layout1.addWidget(dialog_frame)
+        layout1.addLayout(layout_b)
+
+        layout2 = QHBoxLayout()
+        layout2.addWidget(self.text_label)
+
+        container_widget.setLayout(layout2)
+        container_widget.setLayout(layout2)
+
+        layout2.insertLayout(0, layout1)
+
+        self.setLayout(layout2)
+        self.resize(1280,720)
+
+
+
     
     def update_text(self):
         new_text="change"
