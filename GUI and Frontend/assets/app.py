@@ -85,22 +85,24 @@ class CameraDialog(QDialog):
                 
             H, W, ch = rgb_image.shape
             bytes_per_line = ch * W
-            
-            while switch==True:
 
-                model_dict = pickle.load(open('ASL to English\Files and Models\model.p', 'rb'))
-                model = model_dict['model']
+            model_dict = pickle.load(open('ASL to English\Files and Models\model.p', 'rb'))
+            model = model_dict['model']
+
+            mp_hands = mp.solutions.hands
+            mp_drawing = mp.solutions.drawing_utils
+            mp_drawing_styles = mp.solutions.drawing_styles
+
+            hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
+
+
+            while switch==True:
 
                 data_aux = []
                 x_ = []
                 y_ = []                
 
-                mp_hands = mp.solutions.hands
-                mp_drawing = mp.solutions.drawing_utils
-                mp_drawing_styles = mp.solutions.drawing_styles
-
-                hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
-
+                
                 results = hands.process(rgb_image)
                 if results.multi_hand_landmarks:
                     for hand_landmarks in results.multi_hand_landmarks:
@@ -138,12 +140,15 @@ class CameraDialog(QDialog):
                     except:
                         print("too many hands")
 
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
-                    cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,cv2.LINE_AA)
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
+                cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,cv2.LINE_AA)
+                #cv2.imshow(self.image_label, frame)
+                #cv2.waitKey(1)
+
             
             #q_image = QImage(rgb_image.data, W, H, bytes_per_line, QImage.Format_RGB888)
             #pixmap = QPixmap.fromImage(q_image)
-                    self.image_label.setPixmap(cv2)
+            #self.image_label.setPixmap(cv2)
                     
 
 

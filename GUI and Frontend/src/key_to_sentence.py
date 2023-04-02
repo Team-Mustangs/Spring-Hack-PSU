@@ -22,5 +22,5 @@ class ks:
     def ask(self,prompt):
         prompt = "Genearte simple but factually true sentence from the following keywords: " + prompt 
         answer = self.ask_question(prompt)
-        print(answer)
+        return answer
 
