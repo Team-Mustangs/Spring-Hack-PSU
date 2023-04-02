@@ -20,7 +20,7 @@ class ks:
         return response.choices[0].text.strip()
 
     def ask(self,prompt):
-        prompt = "Genearte simple but factually true sentence from the following keywords: " + prompt 
+        prompt = "You can't used the work ok or okay in sentences. Genearte simple but factually true sentence from the following keywords: " + prompt 
         answer = self.ask_question(prompt)
         return answer
 
