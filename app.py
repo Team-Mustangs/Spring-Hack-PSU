@@ -1,13 +1,14 @@
-from ctypes import alignment
 import sys
 from tkinter import Widget, dialog
+from turtle import color
 import cv2
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QFont
 from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QFrame, QLineEdit
 from PyQt5.QtWidgets import QSizePolicy
+import threading
 
-
+#footer - collaboration
 '''
 1) Color scheme
 2) 
@@ -28,13 +29,13 @@ class CameraDialog(QDialog):
         self.setLayout(layout)
 
         # Start the camera input
-        self.capture = cv2.VideoCapture(0)
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_frame)
-        self.timer.start(30)
+        self.start_webcam()
 
     def update_frame(self):
         ret, frame = self.capture.read()
+
+        frame = cv2.flip(frame, 1)
+
         if ret:
             # Convert the frame to RGB format and display it on the label
             rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -44,43 +45,53 @@ class CameraDialog(QDialog):
             pixmap = QPixmap.fromImage(q_image)
             self.image_label.setPixmap(pixmap)
 
+    def update_label(self):
+        new_label=QLabel(self)
+        new_label.setStyleSheet('background-color: #000000')
+        pixmap=QPixmap('C:/Users/harsh/OneDrive/Documents/GitHub/Spring-Hack-PSU/image.png')
+        pixmap = pixmap.scaled(640, 480, Qt.KeepAspectRatio)
+        self.image_label.setPixmap(pixmap)
+
+    def start_webcam(self):
+        self.image_label.clear()
+        self.capture = cv2.VideoCapture(0)
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_frame)
+        self.timer.start(30)
+
+    def stop_webcam(self):
+        self.timer.stop()
+        if self.capture:
+            self.capture.release()
+        self.update_label()
+
 class MyWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        #layout = QVBoxLayout()
-        #layout.minimumSize()
-        dialog_frame = CameraDialog()
-#
-        #layout_h = QHBoxLayout()
-    #
-        self.text_label = QLabel("Initial text", self) 
-        self.text_label.setAlignment(Qt.AlignCenter)
-        self.text_label.resize(100,100)
-#
-        #layout_h.addWidget(button)
-#
-        #layout.addWidget(dialog_frame)
-        #layout.addLayout(layout_h)
-        #layout.addWidget(self.text_label)
-#
-        #self.setLayout(layout)1
-        #self.resize(800,800)
+        self.switch=True
+        self.dialog_frame = CameraDialog()
 
-        container_widget = QWidget(self)
-        container_widget.setStyleSheet('background-color: blue')
+        self.text_label = QLabel("<h1>Translation</h1>", self) 
+        font = QFont('Arial', 12)
 
-        button1 = QPushButton('Video on', self)
+        self.text_label.setFont(font)
+        self.text_label.setStyleSheet('background-color: #ffffff ; border: 2px solid black ; border-radius: 10px; color: #D22E1E')
+        self.text_label.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        button1 = QPushButton('On/Off', self)
 
         button1.setMinimumHeight(50)
-        button1.setStyleSheet('background-color: green')
-        button1.clicked.connect(self.on_click)
+        button1.setStyleSheet('background-color: #ffffff; border-radius: 10px')
+        button1.clicked.connect(self.on_click1)
+        button1.setFont(font)
 
-        button2 = QPushButton('Video off', self)
+        button2 = QPushButton('Translate', self)
 
         button2.setMinimumHeight(50)
-        button2.setStyleSheet('background-color: green')
-        button2.clicked.connect(self.on_click)
+        button2.setStyleSheet('background-color: #ffffff; border-radius: 10px')
+        button2.clicked.connect(self.on_click2)
+        button2.setFont(font)
 
         #button layout
         layout_b = QHBoxLayout()
@@ -89,35 +100,43 @@ class MyWidget(QWidget):
         layout_b.addWidget(button2)
 
         layout1 = QVBoxLayout()
-        layout1.addWidget(dialog_frame)
+        layout1.addWidget(self.dialog_frame)
         layout1.addLayout(layout_b)
 
         layout2 = QHBoxLayout()
         layout2.addWidget(self.text_label)
 
-        container_widget.setLayout(layout2)
-        container_widget.setLayout(layout2)
-
         layout2.insertLayout(0, layout1)
 
         self.setLayout(layout2)
-        self.resize(1280,720)
+        self.resize(1280,540)
 
-
-
-    
-    def update_text(self):
-        new_text="change"
+    def update_text(self, text):
+        new_text=f"<h1>{text}</h1>"
+        font = QFont('Arial', 12)
+        self.text_label.setFont(font)
+        self.text_label.setStyleSheet('background-color: #ffffff ; border: 2px solid black ; border-radius: 10px; color: #D22E1E')
         self.text_label.setText(new_text)
 
+    
+
     @pyqtSlot()
-    def on_click(self):
-        self.update_text()
-        
+    def on_click1(self):
+        if self.switch==True:
+            self.dialog_frame.stop_webcam()
+            self.switch=False
+        else:
+            self.dialog_frame.start_webcam()
+            self.switch=True
+    
+    @pyqtSlot()
+    def on_click2(self):
+        self.update_text("Harsh")
+        self.update_text("Aviral")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget = MyWidget()
-    widget.setStyleSheet('background-color: white; border: 2px solid yellow;')
+    widget.setStyleSheet('background-color: #004879')
     widget.show()
     sys.exit(app.exec_())
