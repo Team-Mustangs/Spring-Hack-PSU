@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 # Load the pre-trained model
-model = tf.keras.models.load_model('assets\model.h5')
+model = tf.keras.models.load_model('assets\ASLModel.h5')
 
 
 labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','DEL',"Nothing","SPACE"]
@@ -18,7 +18,7 @@ cap.set(4, 480)
 # Define a function to preprocess the video frames for input to the model
 def preprocess_frame(frame):
     # Resize the frame to the input size of the model
-    frame = cv2.resize(frame, (244, 244))
+    frame = cv2.resize(frame, (64, 64))
     # Convert the frame to a numpy array and normalize the pixel values
     frame = np.array(frame, dtype=np.float32) / 255.0
     # Add an extra dimension to represent the batch size of 1
