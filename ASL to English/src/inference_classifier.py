@@ -112,6 +112,8 @@ def video_ASL2Txt():
 
                 predicted_character = labels_dict[int(prediction[0])]
 
+                pred = pred + predicted_character + " "
+
 
             except:
                 print("too many hands")
@@ -119,12 +121,14 @@ def video_ASL2Txt():
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
             cv2.putText(frame, predicted_character, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 0), 3,
                         cv2.LINE_AA)
-                    
         
+
+
+    
         text_img = np.zeros((100, frame.shape[1], 3), np.uint8)
 
         # Add the text to the text image
-        cv2.putText(text_img, "Translated Text will display here.q", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
+        cv2.putText(text_img, predicted_character, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
 
         # Combine the video frame and text image
         combined_img = np.vstack((frame, text_img))
